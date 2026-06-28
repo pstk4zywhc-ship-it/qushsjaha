@@ -1,13 +1,24 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+</head>
 <body>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const encodedMsg = urlParams.get('msg');
+        
         if (encodedMsg) {
-            // فك التشفير وعرض النص
-            const decodedMsg = decodeURIComponent(atob(encodedMsg));
-            alert(decodedMsg);
+            try {
+                // فك التشفير مع دعم كامل للـ UTF-8 (للعربية)
+                const binaryString = atob(encodedMsg);
+                const bytes = Uint8Array.from(binaryString, c => c.charCodeAt(0));
+                const decodedMsg = new TextDecoder('utf-8').decode(bytes);
+                
+                alert(decodedMsg);
+            } catch (e) {
+                console.error("خطأ في فك التشفير:", e);
+            }
         }
     </script>
 </body>
