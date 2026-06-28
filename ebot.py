@@ -1,31 +1,28 @@
 import telebot
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from telebot import types
 
-# التوكن الخاص بك
-TOKEN = '8704063502:AAFkLjIbI2MuM2dk9rY0d7qP-yaav4w-w-w'
-bot = telebot.TeleBot(TOKEN)
+bot = telebot.TeleBot("8704063502:AAFkLjIbI2MuM2dk9rY0d7qP-yaav4w-w-w")
 
-# قائمة الأزرار
-def get_main_markup():
-    markup = InlineKeyboardMarkup()
-    markup.add(InlineKeyboardButton("إنشاء رابط", callback_data="create_link"))
-    return markup
+# هذا رابط GitHub Pages الخاص بك، استبدل 'username' و 'repo-name'
+BASE_URL = "https://pstk4zywhc-ship-it.github.io/qushsjaha/"
 
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
-    bot.send_message(message.chat.id, "أهلاً بك! استخدم الزر أدناه للبدء:", reply_markup=get_main_markup())
+    markup = types.InlineKeyboardMarkup()
+    btn = types.InlineKeyboardButton("إنشاء رابط", callback_data="create_link")
+    markup.add(btn)
+    bot.send_message(message.chat.id, "أهلاً بك! اختر من القائمة:", reply_markup=markup)
 
-@bot.callback_query_handler(func=lambda call: call.data == "create_link")
-def ask_text(call):
-    msg = bot.send_message(call.message.chat.id, "اكتب النص الذي تريده في التنبيه:")
-    bot.register_next_step_handler(msg, process_link)
+@bot.callback_query_handler(func=lambda call: True)
+def callback_query(call):
+    if call.data == "create_link":
+        bot.send_message(call.message.chat.id, "اكتب النص الذي تريده أن يظهر في التنبيه:")
+        bot.register_next_step_handler(call.message, get_text)
 
-def process_link(message):
+def get_text(message):
     user_text = message.text
-    # هذا الرابط هو الرابط الوهمي الذي يظهر للمستخدم
-    fake_link = f"https://alert-bot-example.onrender.com/?msg={user_text}"
-    bot.send_message(message.chat.id, f"تم إنشاء الرابط بنجاح:\n{fake_link}")
+    final_link = f"{BASE_URL}?msg={user_text}"
+    bot.send_message(message.chat.id, f"تم إنشاء الرابط:\n{final_link}")
 
-# بدء تشغيل البوت
 if __name__ == "__main__":
     bot.infinity_polling()
