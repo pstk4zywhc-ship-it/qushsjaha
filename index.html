@@ -1,19 +1,13 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>تنبيه</title>
-</head>
+<html>
 <body>
     <script>
-        // هذا الكود يقرأ النص من الرابط ويعرضه كتنبيه
         const urlParams = new URLSearchParams(window.location.search);
-        const msg = urlParams.get('msg');
-        
-        if (msg) {
-            alert(msg);
-        } else {
-            alert("لا يوجد نص.");
+        const encodedMsg = urlParams.get('msg');
+        if (encodedMsg) {
+            // فك التشفير وعرض النص
+            const decodedMsg = decodeURIComponent(atob(encodedMsg));
+            alert(decodedMsg);
         }
     </script>
 </body>
